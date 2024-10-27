@@ -10,6 +10,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { ThemeContextProvider } from "@/context/ThemeContext";
 import ThemeProvider from "@/providers/ThemeProvider";
+import AuthProvider from "@/providers/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -37,19 +38,21 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body className={inter.className}>
-        <ThemeContextProvider>
-          <ThemeProvider>
-            <NextIntlClientProvider messages={messages}>
-              <div className="main-container">
-                <div className="main-wrapper">
-                  <Navbar />
-                  {children}
-                  <Footer />
+        <AuthProvider>
+          <ThemeContextProvider>
+            <ThemeProvider>
+              <NextIntlClientProvider messages={messages}>
+                <div className="main-container">
+                  <div className="main-wrapper">
+                    <Navbar />
+                    {children}
+                    <Footer />
+                  </div>
                 </div>
-              </div>
-            </NextIntlClientProvider>
-          </ThemeProvider>
-        </ThemeContextProvider>
+              </NextIntlClientProvider>
+            </ThemeProvider>
+          </ThemeContextProvider>
+        </AuthProvider>
       </body>
     </html>
   );
