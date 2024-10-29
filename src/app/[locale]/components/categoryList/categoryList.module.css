@@ -24,6 +24,30 @@
   background-color: #57c4ff31;
 }
 
+.category.style {
+  background-color: #57c4ff31;
+}
+
+.category.bitcoin {
+  background-color: chocolate;
+}
+
+.category.food {
+  background-color: #7fb88133;
+}
+
+.category.travel {
+  background-color: #ff795736;
+}
+
+.category.ethereum {
+  background-color: #5f64b145;
+}
+
+.category.coding {
+  background-color: #5e4fff31;
+}
+
 .image {
   border-radius: 50%;
 }
@@ -51,4 +75,3 @@
     width: 50%;
   }
 }
-
