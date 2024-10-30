@@ -8,6 +8,9 @@ const nextConfig = {
     locales: ["en-US", "fr", "nl-NL", "gr"],
     defaultLocale: "en-US",
   },
+  images: {
+    domains: ["lh3.googleusercontent.com"],
+  },
 };
 
 module.exports = withNextIntl(nextConfig);

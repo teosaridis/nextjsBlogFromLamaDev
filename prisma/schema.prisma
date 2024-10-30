@@ -14,8 +14,8 @@
 // }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider     = "mongodb"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
@@ -127,13 +127,9 @@ model Post {
 model Comment {
   id        String   @id @default(cuid()) @map("_id")
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String
   desc      String
-  img       String?
-  likes     Int      @default(0)
   userEmail String
   user      User     @relation(fields: [userEmail], references: [email])
   postSlug  String
-  post      Post     @relation(fields: [postSlug], references: [slug])
+  post      Post     @relation(fields: [postSlug], references: [id])
 }

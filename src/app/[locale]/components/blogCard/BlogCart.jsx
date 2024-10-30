@@ -5,9 +5,11 @@ import Link from "next/link";
 const BlogCart = ({ key, item }) => {
   return (
     <div className={styles.container} key={key}>
-      <div className={styles.imgContainer}>
-        <Image src={"/p1.jpeg"} alt="" fill className={styles.image} />
-      </div>
+      {item.img && (
+        <div className={styles.imgContainer}>
+          <Image src={item.img} alt="" fill className={styles.image} />
+        </div>
+      )}
       <div className={styles.txtContainer}>
         <div className={styles.txtDetail}>
           <span className={styles.date}>
@@ -15,16 +17,11 @@ const BlogCart = ({ key, item }) => {
           </span>
           <span className={styles.category}>{item.catSlug}</span>
         </div>
-        <Link href={"/"}>
+        <Link href={`/blog/${item.id}`}>
           <h1>{item.title}</h1>
         </Link>
-        <p className={styles.desc}>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has sur
-        </p>
-        <Link href={"/"} className={styles.link}>
+        <p className={styles.desc}>{item.desc.substring(0, 60)}</p>
+        <Link href={`/blog/${item.id}`} className={styles.link}>
           Read More
         </Link>
       </div>
