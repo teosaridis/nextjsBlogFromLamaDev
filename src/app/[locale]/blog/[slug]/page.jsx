@@ -37,7 +37,7 @@ const BlogSinglePage = async ({ params }) => {
               </div>
             ) : (
               <div className={styles.userImgContainer}>
-                <Image src={"/p1.jpeg"} alt="" fill className={styles.avatar} />
+                <Image src={data.img} alt="" fill className={styles.avatar} />
               </div>
             )}
             <div className={styles.userTxtContainer}>
@@ -50,7 +50,7 @@ const BlogSinglePage = async ({ params }) => {
         </div>
         {data?.img && (
           <div className={styles.imgContainer}>
-            <Image src={"/p1.jpeg"} alt="" fill className={styles.image} />
+            <Image src={data.img} alt="" fill className={styles.image} />
           </div>
         )}
       </div>

@@ -1,9 +1,11 @@
 "use client";
 
-import Image from "next/image";
-import styles from "./writePage.module.css";
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
+import { FirebaseApp } from "@/utils/firebase";
+import styles from "./writePage.module.css";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
@@ -12,33 +14,33 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import { FirebaseApp } from "@/utils/firebase";
-import dynamic from "next/dynamic";
 
 const WritePage = () => {
-  const { status } = useSession();
-  const router = useRouter();
-
-  const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
-
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState(null);
-  const [media, setMedia] = useState("");
-  const [value, setValue] = useState("");
   const [title, setTitle] = useState("");
+  const [value, setValue] = useState("");
+  const [media, setMedia] = useState("");
   const [catSlug, setCatSlug] = useState("");
 
   useEffect(() => {
     const storage = getStorage(FirebaseApp);
     const upload = () => {
-      const name = new Date().getTime() + file.name;
-      const storageRef = ref(storage, name);
+      const imageName = new Date().getTime + file.name;
 
-      const uploadTask = uploadBytesResumable(storageRef, file);
+      const storageRef = ref(storage, "images/rivers.jpg");
 
+      const uploadTask = uploadBytesResumable(storageRef, imageName);
+
+      // Register three observers:
+      // 1. 'state_changed' observer, called any time the state changes
+      // 2. Error observer, called on failure
+      // 3. Completion observer, called on successful completion
       uploadTask.on(
         "state_changed",
         (snapshot) => {
+          // Observe state change events such as progress, pause, and resume
+          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           console.log("Upload is " + progress + "% done");
@@ -51,8 +53,12 @@ const WritePage = () => {
               break;
           }
         },
-        (error) => {},
+        (error) => {
+          // Handle unsuccessful uploads
+        },
         () => {
+          // Handle successful uploads on complete
+          // For instance, get the download URL: https://firebasestorage.googleapis.com/...
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             setMedia(downloadURL);
             console.log("File available at", downloadURL);
@@ -60,19 +66,20 @@ const WritePage = () => {
         }
       );
     };
-
     file && upload();
   }, [file]);
+
+  const { status } = useSession();
+  const router = useRouter();
 
   if (status === "loading") {
     return <div className={styles.loading}>Loading...</div>;
   }
-
   if (status === "unauthenticated") {
     router.push("/");
   }
 
-  const slugify = (str) =>
+  const slugifyTitle = (str) =>
     str
       .toLowerCase()
       .trim()
@@ -87,19 +94,12 @@ const WritePage = () => {
         title,
         desc: value,
         img: media,
-        slug: slugify(title),
-        //cat: catSlug || "bitcoin",
-        catSlug: catSlug || "bitcoin", //If not selected, choose the general category
+        slug: slugifyTitle(title),
+        catSlug: catSlug || "general", //If not selected, choose the general category
+        cat: catSlug || "general",
       }),
     });
-
-    if (res.status === 200) {
-      const data = await res.json();
-      console.log(data);
-      const postId = data.id;
-
-      router.push(`/blog/${postId}`);
-    }
+    console.log(res);
   };
 
   return (
@@ -114,9 +114,9 @@ const WritePage = () => {
         className={styles.select}
         onChange={(e) => setCatSlug(e.target.value)}
       >
-        <option value="bitcoin">Bitcoin</option>
-        <option value="ethereum">Ethereum</option>
-        <option value="food">food</option>
+        <option value="Bitcoin">Bitcoin</option>
+        <option value="Ethereum">Ethereum</option>
+        <option value="USDT">USDT</option>
         <option value="culture">culture</option>
         <option value="travel">travel</option>
         <option value="coding">coding</option>
@@ -129,15 +129,17 @@ const WritePage = () => {
           <div className={styles.add}>
             <input
               type="file"
+              accept="image/*"
               id="image"
               onChange={(e) => setFile(e.target.files[0])}
               style={{ display: "none" }}
             />
             <button className={styles.addButton}>
-              <label htmlFor="image">
+              <label htmlFor="image" style={{ cursor: "pointer" }}>
                 <Image src="/image.png" alt="" width={16} height={16} />
               </label>
             </button>
+
             <button className={styles.addButton}>
               <Image src="/external.png" alt="" width={16} height={16} />
             </button>
@@ -151,7 +153,7 @@ const WritePage = () => {
           theme="bubble"
           value={value}
           onChange={setValue}
-          placeholder="Tell your story..."
+          placeholder="Start writing your story..."
         />
       </div>
       <button className={styles.publish} onClick={handleSubmit}>
